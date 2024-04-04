@@ -4,8 +4,12 @@ import pytest
 from django.test.client import Client
 
 # Импортируем модель заметки, чтобы создать экземпляр.
-from notes.models import Note
+from news.models import News, Comment
 
+
+@pytest.fixture(autouse=True)
+def enable_db_access(db):
+    pass
 
 @pytest.fixture
 # Используем встроенную фикстуру для модели пользователей django_user_model.
@@ -34,18 +38,35 @@ def not_author_client(not_author):
 
 
 @pytest.fixture
-def note(author):
-    note = Note.objects.create(  # Создаём объект заметки.
+def news():
+    news = News.objects.create(  # Создаём объект заметки.
         title='Заголовок',
-        text='Текст заметки',
-        slug='note-slug',
-        author=author,
+        text='Текст news',
     )
-    return note
+    return news
 
 @pytest.fixture
 # Фикстура запрашивает другую фикстуру создания заметки.
-def slug_for_args(note):  
+def pk_for_args(news):  
     # И возвращает кортеж, который содержит slug заметки.
     # На то, что это кортеж, указывает запятая в конце выражения.
-    return (note.slug,) 
+    return (news.id,)
+
+@pytest.fixture
+# Фикстура запрашивает другую фикстуру создания коммент.
+def comment(news, author):  
+    # И возвращает кортеж, который содержит slug заметки.
+    # На то, что это кортеж, указывает запятая в конце выражения.
+    comment = Comment.objects.create(  # Создаём объект заметки.
+        news=news,
+        text='Текст comment',
+        author=author,
+    )
+    return comment
+
+@pytest.fixture
+# Фикстура запрашивает другую фикстуру создания заметки.
+def pk_comment_for_args(comment):  
+    # И возвращает кортеж, который содержит slug заметки.
+    # На то, что это кортеж, указывает запятая в конце выражения.
+    return (comment.id,)
