@@ -2,14 +2,14 @@ from http import HTTPStatus
 import pytest
 
 from django.urls import reverse
-from pytest.django.asserts import assertRedirects
+from pytest_django.asserts import assertRedirects
 
 
 @pytest.mark.parametrize(
     'name, args',  # Имя параметра функции.
-      # Значения, которые будут передаваться в name.
+    # Значения, которые будут передаваться в name.
     (
-        ('news:home', None), 
+        ('news:home', None),
         ('users:login', None),
         ('users:logout', None),
         ('news:detail', pytest.lazy_fixture('pk_for_args')),
@@ -44,11 +44,12 @@ def test_pages_availability_for_different_users(
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
 
+
 @pytest.mark.parametrize(
     'name, args',
     (
-     ('news:edit', pytest.lazy_fixture('pk_comment_for_args')),
-     ('news:delete', pytest.lazy_fixture('pk_comment_for_args')),
+        ('news:edit', pytest.lazy_fixture('pk_comment_for_args')),
+        ('news:delete', pytest.lazy_fixture('pk_comment_for_args')),
     ),
 )
 # Передаём в тест анонимный клиент, name проверяемых страниц и args:
@@ -59,4 +60,3 @@ def test_redirects(client, name, args):
     expected_url = f'{login_url}?next={url}'
     response = client.get(url)
     assertRedirects(response, expected_url)
-
