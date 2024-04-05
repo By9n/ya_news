@@ -90,8 +90,28 @@ def comment(news, author):
     return comment
 
 @pytest.fixture
+def comment_list(news, author):
+    today = datetime.today()
+    all_news = [
+        Comment(
+            news=news,
+            author=author,
+            text=f'Просто текст {index}.',
+            # Для каждой новости уменьшаем дату на index дней от today,
+            # где index - счётчик цикла.
+            created=today - timedelta(days=index)
+        )
+        for index in range(settings.COMMENTS_COUNT_ON_NEWS_PAGE + 1)
+    ]
+    Comment.objects.bulk_create(all_news)
+
+@pytest.fixture
 # Фикстура запрашивает другую фикстуру создания заметки.
 def pk_comment_for_args(comment):  
     # И возвращает кортеж, который содержит slug заметки.
     # На то, что это кортеж, указывает запятая в конце выражения.
     return (comment.id,)
+
+# @pytest.fixture
+# def news_date(news):
+#     return (news.data,)
