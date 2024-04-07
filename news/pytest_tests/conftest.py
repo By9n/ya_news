@@ -79,7 +79,7 @@ def pk_for_args(news):
 
 @pytest.fixture
 # Фикстура запрашивает другую фикстуру создания коммент.
-def comment(news, author):  
+def comment_author(news, author):  
     # И возвращает кортеж, который содержит slug заметки.
     # На то, что это кортеж, указывает запятая в конце выражения.
     comment = Comment.objects.create(  # Создаём объект заметки.
@@ -107,11 +107,15 @@ def comment_list(news, author):
 
 @pytest.fixture
 # Фикстура запрашивает другую фикстуру создания заметки.
-def pk_comment_for_args(comment):  
+def pk_comment_for_args(comment_author):  
     # И возвращает кортеж, который содержит slug заметки.
     # На то, что это кортеж, указывает запятая в конце выражения.
-    return (comment.id,)
+    return (comment_author.id,)
 
-# @pytest.fixture
-# def news_date(news):
-#     return (news.data,)
+@pytest.fixture
+def form_data(news, author):
+    return {
+        'news':news,
+        'text':'Новый Текст comment',
+        'author':author,
+    }
