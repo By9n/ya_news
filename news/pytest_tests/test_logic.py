@@ -2,20 +2,21 @@ import pytest
 from http import HTTPStatus
 
 from pytest_django.asserts import assertRedirects, assertFormError
-from pytils.translit import slugify
 from django.urls import reverse
 
-from news.models import News, Comment
+from news.models import Comment
 from news.forms import BAD_WORDS, WARNING
 
 
 # Указываем фикстуру form_data в параметрах теста.
-def test_user_can_create_comment(author_client, author, form_data, pk_for_args):
+def test_user_can_create_comment(
+        author_client, author, form_data, pk_for_args
+):
     url = reverse('news:detail', args=pk_for_args)
     # Создаём пользователя и клиент, логинимся в клиенте
     # В POST-запросе отправляем данные, полученные из фикстуры form_data:
     response = author_client.post(url, data=form_data)
-    # Проверяем, что был выполнен редирект на страницу успешного добавления commenta:
+    # Проверяем, что был выполнен редирект:
     assertRedirects(response, f'{url}#comments')
     # Считаем общее количество comments в БД, ожидаем 1.
     assert Comment.objects.count() == 1
@@ -29,7 +30,9 @@ def test_user_can_create_comment(author_client, author, form_data, pk_for_args):
 
 
 @pytest.mark.django_db
-def test_anonymous_user_cant_create_comment(anonimus_client, form_data, pk_for_args, news):
+def test_anonymous_user_cant_create_comment(
+    anonimus_client, form_data, pk_for_args
+):
     url = reverse('news:detail', args=pk_for_args)
     # Через анонимный клиент пытаемся создать заметку:
     response = anonimus_client.post(url, data=form_data)
@@ -79,7 +82,7 @@ def test_author_can_delete_comment(
 
 
 def test_not_author_cant_delete_comment_of_another_user(
-    not_author_client, pk_comment_for_args  
+    not_author_client, pk_comment_for_args
 ):
     url = reverse('news:delete', args=(pk_comment_for_args))
     # Выполняем запрос на удаление от пользователя-читателя.
