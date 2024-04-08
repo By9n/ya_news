@@ -30,7 +30,7 @@ class TestHomePage(TestCase):
             )
             for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
         ]
-        News.objects.bulk_create(all_news) 
+        News.objects.bulk_create(all_news)
 
     def test_news_count(self):
         # Загружаем главную страницу.
@@ -42,7 +42,7 @@ class TestHomePage(TestCase):
         news_count = object_list.count()
         # Проверяем, что на странице именно 10 новостей.
         self.assertEqual(news_count, settings.NEWS_COUNT_ON_HOME_PAGE)
-    
+
     def test_news_order(self):
         response = self.client.get(self.HOME_URL)
         object_list = response.context['object_list']
@@ -51,7 +51,7 @@ class TestHomePage(TestCase):
         # Сортируем полученный список по убыванию.
         sorted_dates = sorted(all_dates, reverse=True)
         # Проверяем, что исходный список был отсортирован правильно.
-        self.assertEqual(all_dates, sorted_dates) 
+        self.assertEqual(all_dates, sorted_dates)
 
 
 class TestDetailPage(TestCase):
@@ -96,7 +96,7 @@ class TestDetailPage(TestCase):
     def test_anonymous_client_has_no_form(self):
         response = self.client.get(self.detail_url)
         self.assertNotIn('form', response.context)
-        
+
     def test_authorized_client_has_form(self):
         # Авторизуем клиент при помощи ранее созданного пользователя.
         self.client.force_login(self.author)
